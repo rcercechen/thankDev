@@ -1,0 +1,6 @@
+extra_keywords:
+  - password
+  - 数据库
+weights:
+  数据库: 20
+  password: 20
