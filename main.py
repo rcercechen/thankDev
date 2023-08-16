@@ -86,11 +86,6 @@ def process_one_file(config):
 
     content = resp.text
 
-    # repo = 'test'
-    # path = 'test.url'
-    # with open('./bucket-10000-20230102-20230109.csv', 'r') as f:
-    #     content = f.read()
-
     cur_page_score = 0
     nice_words = [
         'username:', 'password:', 'username=', 'password=',
@@ -256,11 +251,12 @@ def process_one_page(page, keyword):
     result = resp.json()
     if len(result['payload']['results']) == 0:
         cprint("[!] can't fetch back github search results, maybe end", color='red', attrs=["bold"])
-        SEARCH_PAGE = 0
-        return
+        return False
 
     for one in result['payload']['results']:
         process_one_file(one)
+
+    return True
 
 
 def banner():
@@ -294,8 +290,8 @@ def main():
         for i in range(SEARCH_PAGE):
             i += 1
             cprint(f"[+] keyword: `{keyword}` process page {i}...")
-            process_one_page(i, keyword)
-            if i >= SEARCH_PAGE:
+            ok = process_one_page(i, keyword)
+            if not ok:
                 break
     analysis()
 
@@ -318,6 +314,7 @@ if __name__ == "__main__":
     
     load_custom_weights()
     cprint(f"[+] start to crawl github, using keyword {KEYWORD}", color='green', attrs=['bold'])
+    cprint(f"[+] using extra keywords {EXTRA_KEYWORD}", color='green', attrs=['bold'])
     
     main()
     # analysis()
